@@ -1,9 +1,19 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 
 function ToDoList(){
-
-    const [tasks, setTasks] = useState(["Eat Breakfast", "Take a shower","Walk teh dog"]);
+    const [x, setX] = useState([])
+    const tasksData =localStorage.getItem("tasks")
+    const [tasks, setTasks] = useState((tasksData && tasksData.length!==0)?tasksData.split(","):[ "Eat Breakfast", "Take a shower", "Walk teh dog"]);
     const [newtasks, setNewTasks] = useState("");
+
+//     useEffect(
+//         async()=>{
+// await  fetch('https://jsonplaceholder.typicode.com/todos/1')
+//       .then(response => response.json())
+//       .then(json => console.log(json))
+//     }
+//     ,[x])
+//     console.log("tasks new values are", tasks)
 
     function handleInputChange(event){
         setNewTasks(event.target.value);
@@ -13,7 +23,9 @@ function ToDoList(){
     function addTask(){
 
         if(newtasks.trim() !== ""){
-            setTasks(t => [...t, newtasks]);
+            setTasks(prev => [...prev, newtasks]);
+            const dataToSave = [...tasks, newtasks]
+            localStorage.setItem("tasks",dataToSave )
             setNewTasks("");
         }
         
@@ -21,6 +33,7 @@ function ToDoList(){
 
     function deleteTask(index){
         const updatedTasks = tasks.filter((element, i) => i !== index);
+        localStorage.setItem("tasks",updatedTasks )
         setTasks(updatedTasks);
 
     }
@@ -28,14 +41,14 @@ function ToDoList(){
     function moveTaskUp(index){
         if(index > 0){
             const updatedTasks = [...tasks];
-            [updatedTasks[index], updatedTasks[index-1]]= [updatedTasks[index-1], updatedTasks[index]];
+            [updatedTasks[index], updatedTasks[index-1]] = [updatedTasks[index-1], updatedTasks[index]];
             setTasks(updatedTasks);
         }
 
     }
 
     function moveTaskDown(index){
-        if(index < tasks.length - 1){
+        if(index < tasks.length - 3 ){
             const updatedTasks = [...tasks];
             [updatedTasks[index], updatedTasks[index + 1]]= [updatedTasks[index + 1], updatedTasks[index]];
             setTasks(updatedTasks);
@@ -79,7 +92,7 @@ function ToDoList(){
                        👇🏾
                     </button>
                 </li>
-            )}
+            )} 
         </ol>
 
     </div>);
